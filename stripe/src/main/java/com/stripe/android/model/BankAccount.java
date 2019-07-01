@@ -19,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
  * <a href="https://stripe.com/docs/api/java#create_bank_account_token">the Stripe
  * documentation.</a>
  */
-public final class BankAccount {
+public class BankAccount {
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({TYPE_COMPANY, TYPE_INDIVIDUAL})
@@ -29,6 +29,7 @@ public final class BankAccount {
 
     private static final String FIELD_ACCOUNT_HOLDER_NAME = "account_holder_name";
     private static final String FIELD_ACCOUNT_HOLDER_TYPE = "account_holder_type";
+    private static final String FIELD_BANK_ACCOUNT_ID = "bank_account_id";
     private static final String FIELD_BANK_NAME = "bank_name";
     private static final String FIELD_COUNTRY = "country";
     private static final String FIELD_CURRENCY = "currency";
@@ -38,6 +39,7 @@ public final class BankAccount {
 
     @Nullable private final String mAccountHolderName;
     @Nullable @BankAccountType private final String mAccountHolderType;
+    @Nullable private final String mBankAccountId;
     @Nullable private final String mAccountNumber;
     @Nullable private final String mBankName;
     @Nullable @Size(2) private final String mCountryCode;
@@ -72,6 +74,7 @@ public final class BankAccount {
      * @param accountHolderName the account holder's name
      * @param accountHolderType the {@link BankAccountType}
      * @param bankName the name of the bank
+     * @param bankName the name of the bank
      * @param countryCode the two-letter country code of the country in which the account was opened
      * @param currency the three-letter currency code
      * @param fingerprint the account fingerprint
@@ -82,12 +85,13 @@ public final class BankAccount {
             @Nullable String accountHolderName,
             @Nullable @BankAccountType String accountHolderType,
             @Nullable String bankName,
+            @Nullable String bankAccountId,
             @Nullable @Size(2) String countryCode,
             @Nullable @Size(3) String currency,
             @Nullable String fingerprint,
             @Nullable String last4,
             @Nullable String routingNumber) {
-        this(null, accountHolderName, accountHolderType, bankName, countryCode,
+        this(null, accountHolderName, accountHolderType, bankName, bankAccountId, countryCode,
                 currency, fingerprint, last4, routingNumber);
     }
 
@@ -96,6 +100,7 @@ public final class BankAccount {
             @Nullable String accountHolderName,
             @Nullable @BankAccountType String accountHolderType,
             @Nullable String bankName,
+            @Nullable String bankAccountId,
             @Nullable @Size(2) String countryCode,
             @Nullable @Size(3) String currency,
             @Nullable String fingerprint,
@@ -105,6 +110,7 @@ public final class BankAccount {
         mAccountHolderName = accountHolderName;
         mAccountHolderType = accountHolderType;
         mBankName = bankName;
+        mBankAccountId = bankAccountId;
         mCountryCode = countryCode;
         mCurrency = currency;
         mFingerprint = fingerprint;
@@ -120,6 +126,11 @@ public final class BankAccount {
     @Nullable
     public String getAccountHolderName() {
         return mAccountHolderName;
+    }
+
+    @Nullable
+    public String getId() {
+        return mBankAccountId;
     }
 
     @Nullable
@@ -198,7 +209,9 @@ public final class BankAccount {
         return new BankAccount(
                 StripeJsonUtils.optString(jsonObject, FIELD_ACCOUNT_HOLDER_NAME),
                 asBankAccountType(
-                        StripeJsonUtils.optString(jsonObject, FIELD_ACCOUNT_HOLDER_TYPE)),
+                        StripeJsonUtils.optString(jsonObject, FIELD_ACCOUNT_HOLDER_TYPE)
+                ),
+                StripeJsonUtils.optString(jsonObject, FIELD_BANK_ACCOUNT_ID),
                 StripeJsonUtils.optString(jsonObject, FIELD_BANK_NAME),
                 StripeJsonUtils.optCountryCode(jsonObject, FIELD_COUNTRY),
                 StripeJsonUtils.optCurrency(jsonObject, FIELD_CURRENCY),
@@ -223,6 +236,7 @@ public final class BankAccount {
                 && ObjectUtils.equals(mAccountHolderType, bankAccount.mAccountHolderType)
                 && ObjectUtils.equals(mAccountNumber, bankAccount.mAccountNumber)
                 && ObjectUtils.equals(mBankName, bankAccount.mBankName)
+                && ObjectUtils.equals(mBankAccountId, bankAccount.mBankAccountId)
                 && ObjectUtils.equals(mCountryCode, bankAccount.mCountryCode)
                 && ObjectUtils.equals(mCurrency, bankAccount.mCurrency)
                 && ObjectUtils.equals(mFingerprint, bankAccount.mFingerprint)
